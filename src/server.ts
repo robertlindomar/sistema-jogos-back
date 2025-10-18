@@ -33,6 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Exportar app para Vercel e testes
+export default app;
 export { app };
 
 
