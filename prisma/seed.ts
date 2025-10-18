@@ -13,9 +13,10 @@ async function main() {
 
   // Criar usuários
   console.log('👤 Criando usuários...');
-  const nome = "Admin Sistema";
-  const email = "admin@sistema.com";
-  const senha = "123456";
+  const nome = `${process.env.NOME_ADMIN}`;
+  const email = `${process.env.EMAIL_ADMIN}`;
+  const senha = `${process.env.SENHA_ADMIN}`;
+
 
   const usuario1 = await prisma.usuario.create({
     data: {
