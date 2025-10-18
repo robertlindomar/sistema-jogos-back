@@ -1,0 +1,87 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+    ADMIN
+}
+
+model Usuario {
+    id        Int       @id @default(autoincrement())
+    nome      String
+    email     String    @unique
+    senha     String
+    role      Role      @default(ADMIN)
+    convites  Convite[]
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+model Curso {
+    id        Int        @id @default(autoincrement())
+    nome      String
+    jogadores Jogador[]
+    times     Time[]
+    convites  Convite[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+}
+
+model Jogador {
+    id               Int      @id @default(autoincrement())
+    nome             String
+    rm               String   @unique
+    curso_id         Int
+    curso            Curso    @relation(fields: [curso_id], references: [id])
+    timesComoJogador1 Time[]  @relation("Jogador1")
+    timesComoJogador2 Time[]  @relation("Jogador2")
+    timesComoSuporte  Time[]  @relation("Suporte")
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
+
+    @@index([curso_id])
+}
+
+model Time {
+    id              Int      @id @default(autoincrement())
+    nome            String
+    jogador1_id     Int
+    jogador2_id     Int
+    suporte_id      Int
+    curso_id        Int
+    cadastrado_por  String
+    data_cadastro   DateTime @default(now())
+    curso           Curso    @relation(fields: [curso_id], references: [id])
+    jogador1        Jogador  @relation("Jogador1", fields: [jogador1_id], references: [id])
+    jogador2        Jogador  @relation("Jogador2", fields: [jogador2_id], references: [id])
+    suporte         Jogador  @relation("Suporte", fields: [suporte_id], references: [id])
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    @@index([curso_id])
+    @@index([jogador1_id])
+    @@index([jogador2_id])
+    @@index([suporte_id])
+}
+
+model Convite {
+    id          Int      @id @default(autoincrement())
+    token       String   @unique
+    curso_id    Int
+    curso       Curso    @relation(fields: [curso_id], references: [id])
+    criado_por  Int
+    usuario     Usuario  @relation(fields: [criado_por], references: [id])
+    expira_em   DateTime
+    ativo       Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([token])
+    @@index([curso_id])
+}
