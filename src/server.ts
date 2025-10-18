@@ -24,15 +24,15 @@ app.use(routes()); // ← precisa vir antes do errorHandler
 // Middleware de tratamento de erros (sempre no final)
 app.use(errorHandler);
 
-// Porta (Render define via process.env.PORT)
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+// Para ambiente de desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Servidor rodando em http://localhost:${PORT}`);
+    });
+}
 
-// Escutar em 0.0.0.0 (obrigatório para ambientes como Render)
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
-
-// Exportar app para testes
+// Exportar app para Vercel e testes
 export { app };
 
 
